@@ -1,0 +1,29 @@
+​		多态很简单，就是一个对象在他的继承链上可以变换多种形态（类型转换），往上最多转到Object类型，往下最多转成他的真实类型：
+
+```
+public abstract class Animal {
+    public abstract void eat();
+}
+
+
+class Dog extends Animal {
+    @Override
+    public void eat() {
+        System.out.println("狗吃骨头");
+    }
+    
+    public void lookDoor() {
+        System.out.println("看门");
+    }
+}
+```
+
+​					以`Animals a = new Dog();`为例，a往上最多可以转到Object类，往下最多转到Dog类
+
+
+
+​		原理就是偏移量的不同，animals的偏移量只允许他在vtable中找到eat方法，无法偏移到lookDooor方法，即使他在Dog的vtable中真实存在。而想要找到lookDoor，只能把a转换为它的真实类型Dog。
+
+​		在vtable中a调用eat()方法时，是在Dog的vtable中寻找地址的，而Dog中重写了eat()方法，那么记录的就是重写的eat()方法的地址，这就是**方法编译看左边，运行看右边**的原理。
+
+​		对于**变量编译看左边，运行看左边**，是因为在堆中开辟对象空间时，JVM发现a是animals类型的，所以只能在堆内存中对基地址进行animals记录的偏移量，而无法找到Dog中的变量
